@@ -85,20 +85,15 @@ class Program
             Console.WriteLine("dir == null");
             return;
         }
-        string path = Path.GetTempFileName();
+        string path = TempFileName();
         using (FileStream output = new FileStream(path, FileMode.CreateNew))
         {
             output.Write(bytes, 0, bytes.Length);
         }
         ZipFile.ExtractToDirectory(path, dir);
+        File.Delete(path);
         Console.WriteLine($"{dir} created.");
     }
-    /*
-    public static Stream ResourceAsStream(Assembly assembly, string name)
-    {
-        return assembly.GetManifestResourceStream(name);
-    }
-    */
     public static byte[] ResourceAsBytes(Assembly assembly, string name)
     {
         Stream stream = assembly.GetManifestResourceStream(name);
@@ -106,5 +101,10 @@ class Program
         byte[] bytes = new byte[(int)stream.Length];
         stream.Read(bytes, 0, (int)stream.Length);
         return bytes;
+    }
+    public static string TempFileName()
+    {
+        string path = Path.GetTempPath();
+        return $"{path}\\{Path.GetRandomFileName()}";
     }
 }
